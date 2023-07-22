@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>FLV Player</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+
+    #playerWrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+    }
+    
+    #videoElement {
+      width: 100%;
+      height: 100%;
+      object-fit: contain; /* 如果您希望视频完全填充播放器，请使用"cover" */
+    }
+  </style>
+</head>
+<body>
+  <div id="playerWrapper">
+    <video id="videoElement" controls></video>
+  </div>
+  
+  <script src="flv.js"></script> 
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      if (flvjs.isSupported()) {
+        var videoElement = document.getElementById('videoElement');
+        var playerWrapper = document.getElementById('playerWrapper');
+        
+        // 设置视频自动播放
+        videoElement.autoplay = true;
+
+        var flvPlayer = flvjs.createPlayer({
+          type: 'flv',
+          url: 'http://hua666.eu.org:2022/live/jike2.flv'
+        });
+        flvPlayer.attachMediaElement(videoElement);
+        flvPlayer.load();
+        
+        // 在视频加载完成后，尝试进入全屏模式
+        flvPlayer.on(flvjs.Events.LOADEDMETADATA, function() {
+          var videoWidth = flvPlayer.mediaInfo.width;
+          var videoHeight = flvPlayer.mediaInfo.height;
+          
+          // 根据视频的纵横比例来调整播放器的大小
+          var aspectRatio = videoWidth / videoHeight;
+          playerWrapper.style.maxHeight = '100vh';
+          playerWrapper.style.maxWidth = playerWrapper.offsetHeight * aspectRatio + 'px';
+          
+          videoElement.requestFullscreen = videoElement.requestFullscreen || videoElement.mozRequestFullScreen || videoElement.webkitRequestFullscreen || videoElement.msRequestFullscreen;
+          videoElement.requestFullscreen();
+        });
+      }
+    });
+  </script>
+</body>
+</html>
